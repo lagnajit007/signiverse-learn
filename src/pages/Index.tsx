@@ -1,12 +1,15 @@
 import React from 'react';
 import { Bell, Search, Youtube, Calendar, Trophy, Award, GamepadIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useNavigate } from 'react-router-dom';
 import WebcamPanel from '../components/WebcamPanel';
 import InstructionPanel from '../components/InstructionPanel';
 import Sidebar from '../components/Sidebar';
 import ProgressStats from '../components/ProgressStats';
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const upcomingLessons = [
     { title: "Basic Greetings", date: "Tomorrow, 2:00 PM", level: "Beginner" },
     { title: "Numbers 1-10", date: "Wed, 3:30 PM", level: "Beginner" },
@@ -59,8 +62,12 @@ const Index = () => {
 
           {/* Main Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-            <WebcamPanel />
-            <InstructionPanel />
+            <div onClick={() => navigate('/lessons')} className="cursor-pointer">
+              <WebcamPanel />
+            </div>
+            <div onClick={() => navigate('/lessons')} className="cursor-pointer">
+              <InstructionPanel />
+            </div>
           </div>
 
           {/* YouTube Tutorials Section */}
@@ -71,7 +78,11 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[1, 2, 3].map((_, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
+                <div 
+                  key={index} 
+                  className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => navigate('/lessons')}
+                >
                   <div className="aspect-video bg-gray-200 rounded-md mb-2"></div>
                   <h3 className="font-medium text-gray-800">Basic Sign Language Tutorial {index + 1}</h3>
                   <p className="text-sm text-gray-600">Learn the fundamentals of signing</p>
@@ -88,7 +99,11 @@ const Index = () => {
             </div>
             <div className="space-y-4">
               {upcomingLessons.map((lesson, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div 
+                  key={index} 
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  onClick={() => navigate('/lessons')}
+                >
                   <div>
                     <h3 className="font-medium text-gray-800">{lesson.title}</h3>
                     <p className="text-sm text-gray-600">{lesson.date}</p>
@@ -109,7 +124,11 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {achievements.map((achievement, index) => (
-                <div key={index} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div 
+                  key={index} 
+                  className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  onClick={() => navigate('/lessons')}
+                >
                   <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center shadow-sm">
                     {achievement.icon}
                   </div>
