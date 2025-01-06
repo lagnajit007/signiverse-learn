@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, BookOpen, Users, Settings, LogOut, LayoutDashboard, MessageSquare } from 'lucide-react';
+import { Home, BookOpen, Users, Settings, LogOut, LayoutDashboard, MessageSquare, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -24,6 +24,7 @@ const Sidebar = () => {
               { icon: MessageSquare, label: 'Inbox', path: '/inbox' },
               { icon: BookOpen, label: 'Lessons', path: '/lessons' },
               { icon: Users, label: 'Community', path: '/community' },
+              { icon: User, label: 'Profile', path: '/profile' },
             ].map((item) => (
               <button
                 key={item.label}
