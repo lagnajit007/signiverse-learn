@@ -25,13 +25,21 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#9b87f5",
-          light: "#b8a8f8",
-          dark: "#7e66f2",
+          DEFAULT: "#8B5CF6",
+          light: "#A78BFA",
+          dark: "#7C3AED",
         },
         secondary: {
-          DEFAULT: "#f8f9fa",
+          DEFAULT: "#F97316",
           foreground: "#1A1F2C",
+        },
+        accent: {
+          purple: "#D946EF",
+          blue: "#0EA5E9",
+          green: "#22C55E",
+          yellow: "#EAB308",
+          orange: "#F97316",
+          pink: "#EC4899",
         },
       },
       keyframes: {
@@ -43,10 +51,19 @@ export default {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0)" },
         },
+        "bounce-slight": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.5s ease-out",
         "slide-in": "slide-in 0.5s ease-out",
+        "bounce-slight": "bounce-slight 2s infinite",
+      },
+      backgroundImage: {
+        'gradient-playful': 'linear-gradient(60deg, #abecd6 0%, #fbed96 100%)',
+        'gradient-fun': 'linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)',
       },
     },
   },
