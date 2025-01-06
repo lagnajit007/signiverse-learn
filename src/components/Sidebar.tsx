@@ -1,60 +1,63 @@
 import React from 'react';
-import { Home, Mail, BookOpen, Users, Settings, LogOut } from 'lucide-react';
+import { Home, BookOpen, Users, Settings, LogOut, LayoutDashboard, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen sticky top-0">
-      <div className="p-6">
+    <div className="w-64 bg-white h-screen sticky top-0 border-r border-gray-100 py-6">
+      <div className="px-6 mb-8">
         <h2 className="text-xl font-bold text-primary flex items-center gap-2">
-          SignLearn
+          SigniVerse
         </h2>
       </div>
 
-      <nav className="px-4">
-        <div className="space-y-1">
-          <h3 className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+      <div className="px-4 space-y-6">
+        <div>
+          <h3 className="px-4 text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
             Overview
           </h3>
-          {[
-            { icon: Home, label: 'Dashboard', active: true },
-            { icon: Mail, label: 'Inbox' },
-            { icon: BookOpen, label: 'Lessons' },
-            { icon: Users, label: 'Community' },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href="#"
-              className={`flex items-center px-4 py-2 text-sm rounded-lg transition-colors ${
-                item.active
-                  ? 'bg-primary text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <item.icon className="h-5 w-5 mr-3" />
-              {item.label}
-            </a>
-          ))}
+          <nav className="space-y-1">
+            {[
+              { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+              { icon: MessageSquare, label: 'Inbox', path: '/inbox' },
+              { icon: BookOpen, label: 'Lessons', path: '/lessons' },
+              { icon: Users, label: 'Community', path: '/community' },
+            ].map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className="flex items-center w-full px-4 py-2.5 text-sm rounded-lg transition-colors hover:bg-primary/10 hover:text-primary group"
+              >
+                <item.icon className="h-5 w-5 mr-3 group-hover:text-primary" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
 
-        <div className="mt-8 space-y-1">
-          <h3 className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <div className="pt-4 border-t border-gray-100">
+          <h3 className="px-4 text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
             Settings
           </h3>
-          {[
-            { icon: Settings, label: 'Settings' },
-            { icon: LogOut, label: 'Logout' },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href="#"
-              className="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <item.icon className="h-5 w-5 mr-3" />
-              {item.label}
-            </a>
-          ))}
+          <nav className="space-y-1">
+            {[
+              { icon: Settings, label: 'Settings', path: '/settings' },
+              { icon: LogOut, label: 'Logout', path: '/logout' },
+            ].map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className="flex items-center w-full px-4 py-2.5 text-sm rounded-lg transition-colors hover:bg-primary/10 hover:text-primary group"
+              >
+                <item.icon className="h-5 w-5 mr-3 group-hover:text-primary" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
-      </nav>
+      </div>
     </div>
   );
 };
