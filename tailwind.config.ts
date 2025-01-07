@@ -25,9 +25,9 @@ export default {
         background: "#F8FAFC",
         foreground: "#1E293B",
         primary: {
-          DEFAULT: "#4F46E5",
-          light: "#818CF8",
-          dark: "#3730A3",
+          DEFAULT: "#8B5CF6",
+          light: "#A78BFA",
+          dark: "#6D28D9",
         },
         secondary: {
           DEFAULT: "#F472B6",
@@ -64,6 +64,9 @@ export default {
       animation: {
         "fade-up": "fade-up 0.5s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
+      },
+      backgroundImage: {
+        'gradient-mint': 'linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)',
       },
     },
   },
