@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Video, ThumbsUp, ArrowRight } from 'lucide-react';
 import WebcamPanel from '../components/WebcamPanel';
 import InstructionPanel from '../components/InstructionPanel';
+import Sidebar from '../components/Sidebar';
 
 const Lessons = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      <Sidebar />
       {/* Left Sidebar - Lesson Navigation */}
       <div className="w-80 bg-white border-r border-gray-200 p-6">
         <div className="mb-6">
