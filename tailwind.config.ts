@@ -62,8 +62,11 @@ export default {
         "bounce-slight": "bounce-slight 2s infinite",
       },
       backgroundImage: {
-        'gradient-playful': 'linear-gradient(60deg, #abecd6 0%, #fbed96 100%)',
-        'gradient-fun': 'linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)',
+        'gradient-playful': 'linear-gradient(135deg, #F6CEEC 0%, #D939CD 100%)',
+        'gradient-fun': 'linear-gradient(-60deg, #ff9a9e 0%, #fad0c4 100%)',
+        'gradient-cool': 'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)',
+        'gradient-warm': 'linear-gradient(120deg, #f6d365 0%, #fda085 100%)',
+        'gradient-fresh': 'linear-gradient(to right, #43e97b 0%, #38f9d7 100%)',
       },
     },
   },

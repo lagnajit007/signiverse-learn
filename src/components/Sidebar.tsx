@@ -6,9 +6,9 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-64 bg-white h-screen sticky top-0 border-r border-gray-100 py-6">
+    <div className="w-64 bg-white/95 backdrop-blur-sm h-screen sticky top-0 border-r border-gray-100 py-6 shadow-lg transition-all duration-300 lg:translate-x-0 -translate-x-full">
       <div className="px-6 mb-8">
-        <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent-purple bg-clip-text text-transparent flex items-center gap-2">
           SigniVerse
         </h2>
       </div>
@@ -29,9 +29,9 @@ const Sidebar = () => {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="flex items-center w-full px-4 py-2.5 text-sm rounded-lg transition-colors hover:bg-primary/10 hover:text-primary group"
+                className="flex items-center w-full px-4 py-3 text-sm rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent-purple/10 hover:text-primary group"
               >
-                <item.icon className="h-5 w-5 mr-3 group-hover:text-primary" />
+                <item.icon className="h-5 w-5 mr-3 transition-colors duration-300 group-hover:text-primary" />
                 <span>{item.label}</span>
               </button>
             ))}
@@ -50,9 +50,9 @@ const Sidebar = () => {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="flex items-center w-full px-4 py-2.5 text-sm rounded-lg transition-colors hover:bg-primary/10 hover:text-primary group"
+                className="flex items-center w-full px-4 py-3 text-sm rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent-purple/10 hover:text-primary group"
               >
-                <item.icon className="h-5 w-5 mr-3 group-hover:text-primary" />
+                <item.icon className="h-5 w-5 mr-3 transition-colors duration-300 group-hover:text-primary" />
                 <span>{item.label}</span>
               </button>
             ))}
