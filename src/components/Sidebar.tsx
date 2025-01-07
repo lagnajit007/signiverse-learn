@@ -3,7 +3,11 @@ import { Home, BookOpen, Users, Settings, LogOut, LayoutDashboard, MessageSquare
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 
-const Sidebar = () => {
+interface SidebarProps {
+  onViewChange?: (view: string) => void;
+}
+
+const Sidebar = ({ onViewChange }: SidebarProps) => {
   const navigate = useNavigate();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -24,6 +28,14 @@ const Sidebar = () => {
     );
   }, []);
 
+  const handleItemClick = (path: string, view?: string) => {
+    if (view && onViewChange) {
+      onViewChange(view);
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <div ref={sidebarRef} className="w-64 bg-white/95 backdrop-blur-sm h-screen sticky top-0 border-r border-green-100 py-6 shadow-lg transition-all duration-300 lg:translate-x-0 -translate-x-full">
       <div className="px-6 mb-8">
@@ -39,15 +51,15 @@ const Sidebar = () => {
           </h3>
           <nav className="space-y-1">
             {[
-              { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-              { icon: MessageSquare, label: 'Inbox', path: '/inbox' },
+              { icon: LayoutDashboard, label: 'Dashboard', path: '/', view: 'dashboard' },
+              { icon: MessageSquare, label: 'Inbox', path: '/', view: 'inbox' },
               { icon: BookOpen, label: 'Lessons', path: '/lessons' },
               { icon: Users, label: 'Community', path: '/community' },
               { icon: User, label: 'Profile', path: '/profile' },
             ].map((item) => (
               <button
                 key={item.label}
-                onClick={() => navigate(item.path)}
+                onClick={() => handleItemClick(item.path, item.view)}
                 className="menu-item flex items-center w-full px-4 py-3 text-sm rounded-xl transition-all duration-300 hover:bg-gradient-mint hover:text-primary group"
               >
                 <item.icon className="h-5 w-5 mr-3 transition-colors duration-300 group-hover:text-primary" />
@@ -68,7 +80,7 @@ const Sidebar = () => {
             ].map((item) => (
               <button
                 key={item.label}
-                onClick={() => navigate(item.path)}
+                onClick={() => handleItemClick(item.path)}
                 className="menu-item flex items-center w-full px-4 py-3 text-sm rounded-xl transition-all duration-300 hover:bg-gradient-mint hover:text-primary group"
               >
                 <item.icon className="h-5 w-5 mr-3 transition-colors duration-300 group-hover:text-primary" />
