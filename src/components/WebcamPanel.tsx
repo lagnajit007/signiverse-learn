@@ -15,26 +15,35 @@ const WebcamPanel = () => {
   const [model, setModel] = useState<handpose.HandPose | null>(null);
   const { toast } = useToast();
 
-  // Initialize handpose model
+  // Initialize TensorFlow.js and handpose model
   useEffect(() => {
-    const loadModel = async () => {
+    const initializeModel = async () => {
       try {
+        // First, explicitly set up TensorFlow.js backend
+        await tf.setBackend('webgl');
+        await tf.ready();
+        
+        console.log('TensorFlow.js backend initialized:', tf.getBackend());
+        
+        // Now load the handpose model
         const loadedModel = await handpose.load();
         setModel(loadedModel);
+        
         toast({
           title: "Hand Detection Model Loaded",
           description: "Ready to detect hand gestures.",
         });
       } catch (error) {
-        console.error('Error loading handpose model:', error);
+        console.error('Error initializing TensorFlow.js or loading handpose model:', error);
         toast({
           variant: "destructive",
           title: "Model Loading Error",
-          description: "Failed to load hand detection model.",
+          description: "Failed to load hand detection model. Please ensure WebGL is supported in your browser.",
         });
       }
     };
-    loadModel();
+    
+    initializeModel();
   }, []);
 
   const startWebcam = async () => {
