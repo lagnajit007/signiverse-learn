@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, Paperclip, Mic } from "lucide-react";
+import { Send, Paperclip, Mic, Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import gsap from 'gsap';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface Message {
   id: number;
@@ -18,43 +20,26 @@ interface Message {
   isOwn?: boolean;
 }
 
-const messages: Message[] = [
-  {
-    id: 1,
-    sender: {
-      name: "Michael B.",
-      avatar: "/placeholder.svg",
-      role: "Project Manager"
-    },
-    content: "Hello! How's the progress on the new feature?",
-    timestamp: "12:25"
-  },
-  {
-    id: 2,
-    sender: {
-      name: "You",
-      avatar: "/placeholder.svg",
-      role: "Developer"
-    },
-    content: "Hi! I've completed the initial implementation. Would you like to review it?",
-    timestamp: "12:28",
-    isOwn: true
-  },
-  {
-    id: 3,
-    sender: {
-      name: "Michael B.",
-      avatar: "/placeholder.svg",
-      role: "Project Manager"
-    },
-    content: "That would be great! Can you share the documentation as well?",
-    timestamp: "12:30"
-  }
-];
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 const Inbox = () => {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 1,
+      sender: {
+        name: "SigniVerse AI",
+        avatar: "/placeholder.svg",
+        role: "Assistant"
+      },
+      content: "Hello! I'm your SigniVerse assistant. How can I help you learn sign language today?",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (containerRef.current) {
@@ -83,16 +68,83 @@ const Inbox = () => {
     scrollToBottom();
   }, [messages]);
 
+  const generateResponse = async (userMessage: string) => {
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const prompt = `You are a helpful sign language learning assistant. The user message is: ${userMessage}. 
+                     Provide a concise and helpful response about sign language.`;
+      
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      return text;
+    } catch (error) {
+      console.error('Error generating response:', error);
+      throw error;
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const newUserMessage: Message = {
+      id: messages.length + 1,
+      sender: {
+        name: "You",
+        avatar: "/placeholder.svg",
+        role: "User"
+      },
+      content: inputMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isOwn: true
+    };
+
+    setMessages(prev => [...prev, newUserMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      const aiResponse = await generateResponse(inputMessage);
+      
+      const newAiMessage: Message = {
+        id: messages.length + 2,
+        sender: {
+          name: "SigniVerse AI",
+          avatar: "/placeholder.svg",
+          role: "Assistant"
+        },
+        content: aiResponse,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages(prev => [...prev, newAiMessage]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate response. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-chat-background">
-      {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold">Inbox</h1>
+          <h1 className="text-2xl font-semibold">SigniVerse Assistant</h1>
         </div>
       </div>
 
-      {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div ref={containerRef} className="space-y-4">
           {messages.map((message) => (
@@ -125,21 +177,32 @@ const Inbox = () => {
         </div>
       </ScrollArea>
 
-      {/* Input */}
       <div className="p-4 border-t bg-card">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon">
             <Paperclip className="w-5 h-5" />
           </Button>
           <Input 
-            placeholder="Write a message..." 
+            placeholder="Ask anything about sign language..." 
             className="flex-1 bg-chat-bubble border-0"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isLoading}
           />
           <Button variant="ghost" size="icon">
             <Mic className="w-5 h-5" />
           </Button>
-          <Button size="icon">
-            <Send className="w-4 h-4" />
+          <Button 
+            size="icon"
+            onClick={handleSendMessage}
+            disabled={isLoading || !inputMessage.trim()}
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </div>
