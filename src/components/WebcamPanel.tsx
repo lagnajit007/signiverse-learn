@@ -6,6 +6,14 @@ import ProgressMetrics from './webcam/ProgressMetrics';
 import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
 
+const fingerJoints = {
+  thumb: [0, 1, 2, 3, 4],
+  indexFinger: [0, 5, 6, 7, 8],
+  middleFinger: [0, 9, 10, 11, 12],
+  ringFinger: [0, 13, 14, 15, 16],
+  pinky: [0, 17, 18, 19, 20],
+};
+
 const WebcamPanel = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,13 +27,11 @@ const WebcamPanel = () => {
   useEffect(() => {
     const initializeModel = async () => {
       try {
-        // First, explicitly set up TensorFlow.js backend
         await tf.setBackend('webgl');
         await tf.ready();
         
         console.log('TensorFlow.js backend initialized:', tf.getBackend());
         
-        // Now load the handpose model
         const loadedModel = await handpose.load();
         setModel(loadedModel);
         
@@ -45,6 +51,56 @@ const WebcamPanel = () => {
     
     initializeModel();
   }, []);
+
+  const drawHand = (ctx: CanvasRenderingContext2D, landmarks: number[][]) => {
+    // Draw palm dots
+    landmarks.forEach((point, index) => {
+      const x = point[0];
+      const y = point[1];
+
+      // Draw larger dots for palm landmarks
+      ctx.beginPath();
+      ctx.arc(x, y, index === 0 ? 8 : 4, 0, 2 * Math.PI);
+      ctx.fillStyle = index === 0 ? '#FF0000' : '#00FF00';
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    // Draw finger lines
+    Object.values(fingerJoints).forEach((finger, fingerIndex) => {
+      // Different color for each finger
+      const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
+      ctx.strokeStyle = colors[fingerIndex];
+      ctx.lineWidth = 2;
+
+      // Draw lines connecting each finger joint
+      for (let i = 0; i < finger.length - 1; i++) {
+        const firstJointIndex = finger[i];
+        const secondJointIndex = finger[i + 1];
+
+        ctx.beginPath();
+        ctx.moveTo(
+          landmarks[firstJointIndex][0],
+          landmarks[firstJointIndex][1]
+        );
+        ctx.lineTo(
+          landmarks[secondJointIndex][0],
+          landmarks[secondJointIndex][1]
+        );
+        ctx.stroke();
+      }
+    });
+
+    // Draw palm base
+    ctx.beginPath();
+    ctx.moveTo(landmarks[0][0], landmarks[0][1]);
+    [5, 9, 13, 17].forEach((point) => {
+      ctx.lineTo(landmarks[point][0], landmarks[point][1]);
+    });
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  };
 
   const startWebcam = async () => {
     try {
@@ -105,27 +161,9 @@ const WebcamPanel = () => {
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw hand landmarks
+        // Draw each detected hand
         hands.forEach((hand) => {
-          const landmarks = hand.landmarks;
-
-          // Draw dots for each landmark
-          landmarks.forEach((point) => {
-            ctx.beginPath();
-            ctx.arc(point[0], point[1], 5, 0, 2 * Math.PI);
-            ctx.fillStyle = '#00FF00';
-            ctx.fill();
-          });
-
-          // Draw lines connecting landmarks
-          ctx.beginPath();
-          ctx.moveTo(landmarks[0][0], landmarks[0][1]);
-          landmarks.forEach((point) => {
-            ctx.lineTo(point[0], point[1]);
-          });
-          ctx.strokeStyle = '#FF0000';
-          ctx.lineWidth = 2;
-          ctx.stroke();
+          drawHand(ctx, hand.landmarks);
         });
 
         // Continue detection loop
