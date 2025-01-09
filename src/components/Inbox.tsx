@@ -20,7 +20,17 @@ interface Message {
   isOwn?: boolean;
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// Initialize Gemini with API key from localStorage, or save it if not present
+const getOrSetApiKey = () => {
+  const storedKey = localStorage.getItem('GEMINI_API_KEY');
+  if (!storedKey) {
+    // Note: In a production environment, you should use a more secure method
+    localStorage.setItem('GEMINI_API_KEY', 'AIzaSyDmMfckuj5NNPBjJoOZMaJNE3804I6uzds');
+  }
+  return storedKey || 'AIzaSyDmMfckuj5NNPBjJoOZMaJNE3804I6uzds';
+};
+
+const genAI = new GoogleGenerativeAI(getOrSetApiKey());
 
 const Inbox = () => {
   const [messages, setMessages] = useState<Message[]>([
