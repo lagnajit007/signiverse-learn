@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { Bell, Search, Youtube, Calendar, Trophy, Award, GamepadIcon } from 'lucide-react';
+import { Bell, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import Inbox from '../components/Inbox';
 import WebcamPanel from '../components/WebcamPanel';
 import InstructionPanel from '../components/InstructionPanel';
-import Sidebar from '../components/Sidebar';
 import ProgressStats from '../components/ProgressStats';
-import Inbox from '../components/Inbox';
 
 const Index = () => {
-  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState('dashboard');
 
   const upcomingLessons = [
@@ -131,32 +130,33 @@ const Index = () => {
       <Sidebar onViewChange={setCurrentView} />
       
       <div className="flex-1">
-        {/* Header */}
-        <header className="bg-white shadow-sm px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="relative w-96">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search for signs..."
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              />
+        {currentView !== 'inbox' && (
+          <header className="bg-white shadow-sm px-6 py-4">
+            <div className="flex justify-between items-center">
+              <div className="relative w-96">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Search for signs..."
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                <button className="p-2 rounded-lg hover:bg-gray-100">
+                  <Bell className="h-5 w-5 text-gray-600" />
+                </button>
+                <Link to="/profile">
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </Link>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-lg hover:bg-gray-100">
-                <Bell className="h-5 w-5 text-gray-600" />
-              </button>
-              <Link to="/profile">
-                <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </Link>
-            </div>
-          </div>
-        </header>
+          </header>
+        )}
 
-        <main className="p-6 space-y-8">
+        <main className={currentView === 'inbox' ? '' : 'p-6 space-y-8'}>
           {renderContent()}
         </main>
       </div>

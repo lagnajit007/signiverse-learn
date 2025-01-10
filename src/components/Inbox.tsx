@@ -1,34 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Send, Paperclip, Mic, Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import gsap from 'gsap';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-interface Message {
-  id: number;
-  sender: {
-    name: string;
-    avatar: string;
-    role: string;
-  };
-  content: string;
-  timestamp: string;
-  isOwn?: boolean;
-}
-
-// Initialize Gemini with API key from localStorage, or save it if not present
-const getOrSetApiKey = () => {
-  const storedKey = localStorage.getItem('GEMINI_API_KEY');
-  if (!storedKey) {
-    // Note: In a production environment, you should use a more secure method
-    localStorage.setItem('GEMINI_API_KEY', 'AIzaSyDmMfckuj5NNPBjJoOZMaJNE3804I6uzds');
-  }
-  return storedKey || 'AIzaSyDmMfckuj5NNPBjJoOZMaJNE3804I6uzds';
-};
+import { Message, getOrSetApiKey } from '@/types/chat';
+import ChatMessage from './chat/ChatMessage';
+import ChatInput from './chat/ChatInput';
+import ChatHeader from './chat/ChatHeader';
 
 const genAI = new GoogleGenerativeAI(getOrSetApiKey());
 
@@ -55,17 +33,8 @@ const Inbox = () => {
     if (containerRef.current) {
       gsap.fromTo(
         containerRef.current.children,
-        { 
-          opacity: 0, 
-          y: 20 
-        },
-        { 
-          opacity: 1, 
-          y: 0, 
-          duration: 0.5, 
-          stagger: 0.1,
-          ease: "power2.out"
-        }
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out" }
       );
     }
   }, []);
@@ -149,73 +118,22 @@ const Inbox = () => {
 
   return (
     <div className="flex flex-col h-screen bg-chat-background">
-      <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold">SigniVerse Assistant</h1>
-        </div>
-      </div>
-
+      <ChatHeader />
       <ScrollArea className="flex-1 p-4">
         <div ref={containerRef} className="space-y-4">
           {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`flex ${message.isOwn ? 'flex-row-reverse' : 'flex-row'} items-start gap-3 max-w-[80%]`}>
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={message.sender.avatar} />
-                  <AvatarFallback>{message.sender.name[0]}</AvatarFallback>
-                </Avatar>
-                <div className={`flex flex-col ${message.isOwn ? 'items-end' : 'items-start'}`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-medium">{message.sender.name}</span>
-                    <span className="text-xs text-chat-time">{message.timestamp}</span>
-                  </div>
-                  <div className={`p-3 rounded-2xl ${
-                    message.isOwn 
-                      ? 'bg-primary text-white rounded-tr-none' 
-                      : 'bg-chat-bubble text-foreground rounded-tl-none'
-                  }`}>
-                    {message.content}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ChatMessage key={message.id} message={message} />
           ))}
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
-
-      <div className="p-4 border-t bg-card">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Paperclip className="w-5 h-5" />
-          </Button>
-          <Input 
-            placeholder="Ask anything about sign language..." 
-            className="flex-1 bg-chat-bubble border-0"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isLoading}
-          />
-          <Button variant="ghost" size="icon">
-            <Mic className="w-5 h-5" />
-          </Button>
-          <Button 
-            size="icon"
-            onClick={handleSendMessage}
-            disabled={isLoading || !inputMessage.trim()}
-          >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
-      </div>
+      <ChatInput 
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+        handleSendMessage={handleSendMessage}
+        isLoading={isLoading}
+        handleKeyPress={handleKeyPress}
+      />
     </div>
   );
 };
