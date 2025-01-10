@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Trophy, Award, Gamepad, Youtube, Calendar } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Inbox from '../components/Inbox';
 import WebcamPanel from '../components/WebcamPanel';
@@ -10,6 +10,7 @@ import ProgressStats from '../components/ProgressStats';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('dashboard');
+  const navigate = useNavigate();
 
   const upcomingLessons = [
     { title: "Basic Greetings", date: "Tomorrow, 2:00 PM", level: "Beginner" },
@@ -20,7 +21,7 @@ const Index = () => {
   const achievements = [
     { title: "First Sign", description: "Complete your first sign", icon: <Trophy className="h-6 w-6 text-yellow-500" /> },
     { title: "Perfect Score", description: "Get 100% accuracy", icon: <Award className="h-6 w-6 text-blue-500" /> },
-    { title: "Weekly Champion", description: "Practice 7 days in a row", icon: <GamepadIcon className="h-6 w-6 text-green-500" /> }
+    { title: "Weekly Champion", description: "Practice 7 days in a row", icon: <Gamepad className="h-6 w-6 text-green-500" /> }
   ];
 
   const renderContent = () => {
