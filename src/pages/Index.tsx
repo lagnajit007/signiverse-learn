@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Search, Trophy, Award, Gamepad, Youtube, Calendar } from 'lucide-react';
+import { Bell, Search, Trophy, Award, Gamepad, Youtube, Calendar, BookOpen, Laptop, Users, PenTool } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
@@ -12,10 +12,17 @@ const Index = () => {
   const [currentView, setCurrentView] = useState('dashboard');
   const navigate = useNavigate();
 
+  const categories = [
+    { icon: <Laptop className="h-5 w-5" />, label: "IT & Software" },
+    { icon: <PenTool className="h-5 w-5" />, label: "Media Training" },
+    { icon: <Users className="h-5 w-5" />, label: "Business" },
+    { icon: <BookOpen className="h-5 w-5" />, label: "Language" },
+  ];
+
   const upcomingLessons = [
-    { title: "Basic Greetings", date: "Tomorrow, 2:00 PM", level: "Beginner" },
-    { title: "Numbers 1-10", date: "Wed, 3:30 PM", level: "Beginner" },
-    { title: "Common Phrases", date: "Fri, 1:00 PM", level: "Intermediate" }
+    { title: "Basic Greetings", date: "Tomorrow, 2:00 PM", level: "Beginner", students: "9,530" },
+    { title: "Numbers 1-10", date: "Wed, 3:30 PM", level: "Beginner", students: "7,845" },
+    { title: "Common Phrases", date: "Fri, 1:00 PM", level: "Intermediate", students: "6,120" }
   ];
 
   const achievements = [
@@ -31,115 +38,112 @@ const Index = () => {
       case 'dashboard':
       default:
         return (
-          <>
-            {/* Welcome Section */}
-            <div className="mb-8 animate-fade-in">
-              <h1 className="text-2xl font-bold text-gray-800">Welcome back, Learner! 👋</h1>
-              <p className="text-gray-600">Continue your journey in sign language learning</p>
+          <div className="space-y-8 p-6 bg-background">
+            {/* Categories */}
+            <div className="flex gap-4 overflow-x-auto pb-4">
+              {categories.map((category, index) => (
+                <button
+                  key={index}
+                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all"
+                  onClick={() => navigate('/lessons')}
+                >
+                  {category.icon}
+                  <span className="whitespace-nowrap text-sm font-medium">{category.label}</span>
+                </button>
+              ))}
             </div>
 
             {/* Progress Stats */}
-            <ProgressStats />
+            <div className="bg-white p-6 rounded-2xl shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Your Progress</h2>
+              <ProgressStats />
+            </div>
 
-            {/* Main Content */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              <div onClick={() => navigate('/lessons')} className="cursor-pointer">
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-card-pink p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer" 
+                   onClick={() => navigate('/lessons')}>
                 <WebcamPanel />
               </div>
-              <div onClick={() => navigate('/lessons')} className="cursor-pointer">
+              <div className="bg-card-purple p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer"
+                   onClick={() => navigate('/lessons')}>
                 <InstructionPanel />
               </div>
             </div>
 
-            {/* YouTube Tutorials Section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm animate-fade-in">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Video Tutorials</h2>
+            {/* Popular Lessons */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">Popular Lessons</h2>
                 <Youtube className="h-6 w-6 text-red-500" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[1, 2, 3].map((_, index) => (
-                  <div 
-                    key={index} 
-                    className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => navigate('/lessons')}
-                  >
-                    <div className="aspect-video bg-gray-200 rounded-md mb-2"></div>
-                    <h3 className="font-medium text-gray-800">Basic Sign Language Tutorial {index + 1}</h3>
-                    <p className="text-sm text-gray-600">Learn the fundamentals of signing</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Upcoming Lessons Section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm animate-fade-in">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Upcoming Lessons</h2>
-                <Calendar className="h-6 w-6 text-primary" />
-              </div>
-              <div className="space-y-4">
                 {upcomingLessons.map((lesson, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  <div
+                    key={index}
+                    className="group bg-gradient-to-br from-card-mint to-white p-6 rounded-xl hover:shadow-lg transition-all cursor-pointer"
                     onClick={() => navigate('/lessons')}
                   >
-                    <div>
-                      <h3 className="font-medium text-gray-800">{lesson.title}</h3>
-                      <p className="text-sm text-gray-600">{lesson.date}</p>
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="font-medium text-lg group-hover:text-primary transition-colors">
+                        {lesson.title}
+                      </h3>
+                      <span className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">
+                        {lesson.level}
+                      </span>
                     </div>
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                      {lesson.level}
-                    </span>
+                    <div className="flex items-center justify-between text-sm text-gray-600">
+                      <span>{lesson.date}</span>
+                      <span>{lesson.students} students</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Achievements Section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm animate-fade-in">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Achievements</h2>
+            {/* Achievements */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">Your Achievements</h2>
                 <Trophy className="h-6 w-6 text-yellow-500" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {achievements.map((achievement, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 p-4 bg-gradient-to-br from-card-peach to-white rounded-xl hover:shadow-lg transition-all cursor-pointer"
                     onClick={() => navigate('/lessons')}
                   >
                     <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center shadow-sm">
                       {achievement.icon}
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-800">{achievement.title}</h3>
+                      <h3 className="font-medium text-gray-900">{achievement.title}</h3>
                       <p className="text-sm text-gray-600">{achievement.description}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          </>
+          </div>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-background flex">
       <Sidebar onViewChange={setCurrentView} />
       
       <div className="flex-1">
         {currentView !== 'inbox' && (
-          <header className="bg-white shadow-sm px-6 py-4">
+          <header className="bg-white shadow-sm px-6 py-4 sticky top-0 z-10">
             <div className="flex justify-between items-center">
               <div className="relative w-96">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <input
                   type="text"
                   placeholder="Search for signs..."
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
               <div className="flex items-center space-x-4">
@@ -157,9 +161,7 @@ const Index = () => {
           </header>
         )}
 
-        <main className={currentView === 'inbox' ? '' : 'p-6 space-y-8'}>
-          {renderContent()}
-        </main>
+        <main>{renderContent()}</main>
       </div>
     </div>
   );
